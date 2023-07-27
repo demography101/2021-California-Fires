@@ -1,0 +1,63 @@
+---
+title: "California Fires"
+output: html_document
+date: "2023-07-27"
+---
+
+```{r cars}
+install.packages("sf")
+install.packages("usmap")
+install.packages("tidycensus")
+install.packages("readxl")
+library(ggplot2)
+library("tidycensus")
+library("tidycensus")
+library(dplyr)
+library("readxl")
+
+
+census_api_key('041f118e070667dea491978da5e7c2bedb842535')
+varlist21 = load_variables(2021, "acs5", cache = TRUE)
+library(sf)
+library("usmap")
+
+fires <- read_excel('~/Documents/2022 CA fire data.xlsx')
+
+fires <- fires %>% mutate(perct = round((perct*100),1))
+
+ca <- get_acs(geography='county', state = 'CA', variables = 'B01003_001',
+              year = 2021, geometry = TRUE, output = 'tidy') %>% 
+              rename(fips = GEOID) %>%
+              select(fips, NAME, geometry)
+
+fire_data <- merge(fires, ca)
+
+plot_usmap(regions = "counties", include = c("CA"), data = fire_data, 
+           value = "Total21", color = "white", size = 0.1) +
+           scale_fill_continuous(high="firebrick", low = "gold",
+                        limits = c(0,210),
+                         breaks = c(0,50,100,150,200))+
+  labs(title = "        Total Number of Fires in 
+       California",
+       fill = "Number of 
+    Fires",
+       caption ='Source: 2021 Wildfire Activity Statistics,
+       CA Dept. of Forestry and Fire Protection') +
+  theme_void() +
+  theme(legend.position = "right",
+        legend.text = element_text(color = "white"),
+        legend.title = element_text(color = "white"),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.text = element_blank(),
+        axis.line = element_blank(),
+        axis.ticks = element_blank(),
+        panel.border = element_blank(),
+        panel.grid = element_blank(),
+        plot.background = element_rect(fill = "black", colour = "#000000"),
+        plot.title = element_text(hjust = 0.5, size = 14, color="white", face="bold"),
+        plot.caption = element_text(size = 8, color="white"))
+
+
+```
+
