@@ -21,7 +21,7 @@ varlist21 = load_variables(2021, "acs5", cache = TRUE)
 library(sf)
 library("usmap")
 
-fires <- read_excel('~/Documents/2022 CA fire data.xlsx')
+fires <- read_excel('~/Documents/ca fire data.xlsx')
 
 fires <- fires %>% mutate(perct = round((perct*100),1))
 
